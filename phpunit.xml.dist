@@ -29,10 +29,6 @@
 
     <listeners>
         <listener class="Symfony\Bridge\PhpUnit\SymfonyTestsListener" />
-        <listener class="App\Tests\ReloadFixturesListener">
-            <arguments>
-                <object class="App\Kernel" />
-            </arguments>
-        </listener>
     </listeners>
+
 </phpunit>

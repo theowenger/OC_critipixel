@@ -35,6 +35,7 @@ final class RegisterTest extends FunctionalTestCase
 
         self::assertResponseRedirects('/auth/login');
 
+        $this->getEntityManager()->clear();
         $user = $this->getEntityManager()->getRepository(User::class)->findOneByEmail('user@email.com');
 
         $userPasswordHasher = $this->service(UserPasswordHasherInterface::class);
@@ -51,8 +52,8 @@ final class RegisterTest extends FunctionalTestCase
     public static function getFormData(array $overrideData = []): array
     {
         return [
-                'register[username]' => 'toto',
-                'register[email]' => 'userToto@email.com',
+                'register[username]' => 'username',
+                'register[email]' => 'user@email.com',
                 'register[plainPassword]' => 'SuperPassword123!'
             ] + $overrideData;
     }
