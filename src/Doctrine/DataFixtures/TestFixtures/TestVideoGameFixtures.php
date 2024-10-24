@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Doctrine\DataFixtures;
+namespace App\Doctrine\DataFixtures\TestFixtures;
 
 use App\Model\Entity\Review;
 use App\Model\Entity\Tag;
@@ -15,7 +15,7 @@ use Doctrine\Persistence\ObjectManager;
 use Faker\Generator;
 use function array_fill_callback;
 
-final class VideoGameFixtures extends Fixture implements FixtureGroupInterface
+final class TestVideoGameFixtures extends Fixture implements FixtureGroupInterface
 {
     public function __construct(
         private readonly Generator              $faker,
@@ -27,7 +27,7 @@ final class VideoGameFixtures extends Fixture implements FixtureGroupInterface
 
     public static function getGroups(): array
     {
-        return ['default'];
+        return ['test'];
     }
 
     public function load(ObjectManager $manager): void
@@ -47,7 +47,19 @@ final class VideoGameFixtures extends Fixture implements FixtureGroupInterface
         );
 
         array_walk($videoGames, static function (VideoGame $videoGame, int $index) use ($tags) {
-            $videoGame->getTags()->add($tags[$index % 5]);
+            if ($videoGame->getTitle() === "Jeu vidéo 0") {
+
+                $videoGame->getTags()->add($tags[0]);
+                $videoGame->getTags()->add($tags[1]);
+                $videoGame->getTags()->add($tags[2]);
+            }
+            if ($videoGame->getTitle() === "Jeu vidéo 1") {
+
+                $videoGame->getTags()->add($tags[2]);
+                $videoGame->getTags()->add($tags[3]);
+                $videoGame->getTags()->add($tags[4]);
+            }
+            //$videoGame->getTags()->add($tags[$index % 5]);
         });
 
         array_walk($videoGames, [$manager, 'persist']);
@@ -58,18 +70,20 @@ final class VideoGameFixtures extends Fixture implements FixtureGroupInterface
             shuffle($users);
 
             foreach (array_slice($users, 0, 5) as $user) {
-                $review = (new Review())
-                    ->setUser($user)
-                    ->setVideoGame($videoGame)
-                    ->setRating($this->faker->numberBetween(1, 5))
-                    ->setComment($this->faker->paragraphs(1, true));
+                if ($user->getUsername() !== "user+0") {
+                    $review = (new Review())
+                        ->setUser($user)
+                        ->setVideoGame($videoGame)
+                        ->setRating($this->faker->numberBetween(1, 5))
+                        ->setComment($this->faker->paragraphs(1, true));
 
-                $videoGame->getReviews()->add($review);
+                    $videoGame->getReviews()->add($review);
 
-                $manager->persist($review);
+                    $manager->persist($review);
 
-                $this->calculateAverageRating->calculateAverage($videoGame);
-                $this->countRatingsPerValue->countRatingsPerValue($videoGame);
+                    $this->calculateAverageRating->calculateAverage($videoGame);
+                    $this->countRatingsPerValue->countRatingsPerValue($videoGame);
+                }
             }
         });
 
@@ -78,6 +92,6 @@ final class VideoGameFixtures extends Fixture implements FixtureGroupInterface
 
     public function getDependencies(): array
     {
-        return [TagFixtures::class, UserFixtures::class];
+        return [TestTagFixtures::class, TestUserFixtures::class];
     }
 }

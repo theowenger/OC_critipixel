@@ -34,33 +34,41 @@ final class FilterTest extends FunctionalTestCase
      */
     public function testShouldFilterVideoGamesTags(): void
     {
-        $randomTag = random_int(0, 24);
-        $tagId = $this->getTagIdByName('Tag ' . $randomTag);
-
-        $params = [
-            'page' => 1,
-            'limit' => 10,
-            'sorting' => 'ReleaseDate',
-            'direction' => 'Descending',
-            'filter' => [
-                'tags' => [$tagId],
-            ],
+        // Cas de test avec les tags et les textes attendus
+        $testCases = [
+            [['Tag 0', 'Tag 1', 'Tag 2'], 'Affiche 1 jeux vidéo de 1 à 1 sur les 1 jeux vidéo'],
+            [['Tag 2'], 'Affiche 2 jeux vidéo de 1 à 2 sur les 2 jeux vidéo'],
+            [['Tag 5'], 'Affiche 0 jeux vidéo de 1 à 0 sur les 0 jeux vidéo'],
         ];
 
-        // Exécuter la requête avec les paramètres
-        $this->get('/?' . http_build_query($params));
-        self::assertResponseIsSuccessful();
-        $content = $this->client->getResponse()->getContent();
+        foreach ($testCases as [$tags, $expectedText]) {
+            // Récupérer les ID des tags
+            $tagIds = array_map([$this, 'getTagIdByName'], $tags);
 
-        $this->assertAllTagsContain($content, 'Tag ' . $randomTag);
-    }
+            $params = [
+                'page' => 1,
+                'limit' => 10,
+                'sorting' => 'ReleaseDate',
+                'direction' => 'Descending',
+                'filter' => [
+                    'tags' => $tagIds,
+                ],
+            ];
 
-    private function assertAllTagsContain(string $content, string $expectedTag): void
-    {
-        preg_match_all('/<span class="tag">(.*?)<\/span>/', $content, $matches);
+            // Exécuter la requête avec les paramètres
+            $this->get('/?' . http_build_query($params));
+            self::assertResponseIsSuccessful();
 
-        foreach ($matches[1] as $tagContent) {
-            $this->assertEquals($expectedTag, trim($tagContent), 'Le contenu du tag doit être "' . $expectedTag . '"');
+            // Vérification du texte affiché dans la div
+            $crawler = $this->client->getCrawler();
+            $divText = $crawler->filter('.fw-bold')->text();
+            self::assertEquals($expectedText, trim($divText), 'Le texte dans la div .fw-bold doit correspondre à l\'attendu.');
+
+            $videoGameNode = $crawler->filter('a.text-decoration-none');
+            if ($videoGameNode->count() !== 0) {
+                $videoGameLink = $videoGameNode->first()->text();
+                self::assertEquals('Jeu vidéo 0', trim($videoGameLink), 'Le nom du jeu vidéo doit être "Jeu vidéo 0".');
+            }
         }
     }
 
@@ -72,5 +80,4 @@ final class FilterTest extends FunctionalTestCase
 
         return $tag ? $tag->getId() : null;
     }
-
 }

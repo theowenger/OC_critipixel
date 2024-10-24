@@ -82,3 +82,14 @@ symfony php bin/phpunit
 ```bash
 symfony serve
 ```
+
+### UPDATE README ###
+
+# Pour lancer les fixtures classiques :
+symfony console doctrine:fixtures:load --group=default -n --purge-with-truncate
+
+# Pour lancer les fixtures de test :
+symfony console doctrine:fixtures:load --group=test -n --purge-with-truncate
+
+Pour lancer les tests avec les fixtures de test rechargées :
+

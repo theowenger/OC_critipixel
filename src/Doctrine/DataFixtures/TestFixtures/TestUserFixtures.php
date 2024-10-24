@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Doctrine\DataFixtures;
+namespace App\Doctrine\DataFixtures\TestFixtures;
 
 use App\Model\Entity\User;
 use Doctrine\Bundle\FixturesBundle\Fixture;
@@ -8,11 +8,11 @@ use Doctrine\Bundle\FixturesBundle\FixtureGroupInterface;
 use Doctrine\Persistence\ObjectManager;
 use function array_fill_callback;
 
-final class UserFixtures extends Fixture implements FixtureGroupInterface
+final class TestUserFixtures extends Fixture implements FixtureGroupInterface
 {
     public static function getGroups(): array
     {
-        return ['default'];
+        return ['test'];
     }
     public function load(ObjectManager $manager): void
     {

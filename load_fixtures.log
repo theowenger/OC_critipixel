@@ -1,0 +1,4 @@
+   > purging database
+   > loading App\Doctrine\DataFixtures\TestFixtures\TestTagFixtures
+   > loading App\Doctrine\DataFixtures\TestFixtures\TestUserFixtures
+   > loading App\Doctrine\DataFixtures\TestFixtures\TestVideoGameFixtures

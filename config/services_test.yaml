@@ -1,0 +1,8 @@
+services:
+  # Charger uniquement les fixtures spécifiques aux tests
+  App\Doctrine\DataFixtures\TestFixtures\TestVideoGameFixtures:
+    arguments:
+      $faker: '@Faker\Generator'
+      $calculateAverageRating: '@App\Rating\CalculateAverageRating'
+      $countRatingsPerValue: '@App\Rating\CountRatingsPerValue'
+    tags: ['doctrine.fixture.orm']
