@@ -1,0 +1,17 @@
+#includes:
+#    - vendor/phpstan/phpstan-symfony/extension.neon
+
+parameters:
+    level: 6
+    paths:
+        - src
+        - tests
+    bootstrapFiles:
+        - vendor/autoload.php
+    ignoreErrors:
+        - '#Dummy error to ignore#'
+
+    # Configuration spécifique à Symfony
+    symfony:
+
+        container_xml_path: var/cache/dev/App_KernelDevDebugContainer.xml

@@ -33,6 +33,9 @@ final class VideoGamesList implements Countable, IteratorAggregate
 
     private string $route;
 
+    /**
+     * @var array<string, mixed>
+     */
     private array $routeParameters;
 
     public function __construct(
@@ -132,24 +135,37 @@ final class VideoGamesList implements Countable, IteratorAggregate
         return $this;
     }
 
+    /**
+     * @return Filter
+     */
     public function getFilter(): Filter
     {
         return $this->filter;
     }
 
+    /**
+     * @return Pagination
+     */
     public function getPagination(): Pagination
     {
         return $this->pagination;
     }
 
+    /**
+     * @return Traversable<int, VideoGame>
+     */
     public function getIterator(): Traversable
     {
         return $this->data;
     }
 
+    /**
+     * @return int
+     * @throws \Exception
+     */
     public function count(): int
     {
-        return count($this->data->getIterator());
+        return count(iterator_to_array($this->data));
     }
 
     public function generateUrl(int $page): string

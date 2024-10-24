@@ -21,9 +21,7 @@ final class VideoGameFixtures extends Fixture implements FixtureGroupInterface
         private readonly Generator              $faker,
         private readonly CalculateAverageRating $calculateAverageRating,
         private readonly CountRatingsPerValue   $countRatingsPerValue
-    )
-    {
-    }
+    ) {}
 
     public static function getGroups(): array
     {
@@ -33,28 +31,35 @@ final class VideoGameFixtures extends Fixture implements FixtureGroupInterface
     public function load(ObjectManager $manager): void
     {
         $tags = $manager->getRepository(Tag::class)->findAll();
-
         $users = $manager->getRepository(User::class)->findAll();
 
-        $videoGames = array_fill_callback(0, 50, fn(int $index): VideoGame => (new VideoGame)
-            ->setTitle(sprintf('Jeu vidéo %d', $index))
-            ->setDescription($this->faker->paragraphs(10, true))
-            ->setReleaseDate(new DateTimeImmutable())
-            ->setTest($this->faker->paragraphs(6, true))
-            ->setRating(($index % 5) + 1)
-            ->setImageName(sprintf('video_game_%d.png', $index))
-            ->setImageSize(2_098_872)
-        );
+        // Remplace array_fill_callback par une boucle for
+        $videoGames = [];
+        for ($index = 0; $index < 50; $index++) {
+            $videoGames[] = (new VideoGame())
+                ->setTitle(sprintf('Jeu vidéo %d', $index))
+                ->setDescription($this->faker->paragraphs(10, true))
+                ->setReleaseDate(new DateTimeImmutable())
+                ->setTest($this->faker->paragraphs(6, true))
+                ->setRating(($index % 5) + 1)
+                ->setImageName(sprintf('video_game_%d.png', $index))
+                ->setImageSize(2_098_872);
+        }
 
-        array_walk($videoGames, static function (VideoGame $videoGame, int $index) use ($tags) {
-            $videoGame->getTags()->add($tags[$index % 5]);
-        });
+        // Remplace array_walk par une boucle foreach
+        foreach ($videoGames as $index => $videoGame) {
+            $videoGame->getTags()->add($tags[$index % count($tags)]);
+        }
 
-        array_walk($videoGames, [$manager, 'persist']);
+        // Remplace array_walk par une boucle foreach
+        foreach ($videoGames as $videoGame) {
+            $manager->persist($videoGame);
+        }
 
         $manager->flush();
 
-        array_walk($videoGames, function (VideoGame $videoGame, int $index) use ($users, $manager) {
+        // Ajout des reviews avec la même logique
+        foreach ($videoGames as $videoGame) {
             shuffle($users);
 
             foreach (array_slice($users, 0, 5) as $user) {
@@ -65,17 +70,20 @@ final class VideoGameFixtures extends Fixture implements FixtureGroupInterface
                     ->setComment($this->faker->paragraphs(1, true));
 
                 $videoGame->getReviews()->add($review);
-
                 $manager->persist($review);
 
+                // Appels aux méthodes de calcul
                 $this->calculateAverageRating->calculateAverage($videoGame);
                 $this->countRatingsPerValue->countRatingsPerValue($videoGame);
             }
-        });
+        }
 
         $manager->flush();
     }
 
+    /**
+     * @return class-string[]
+     */
     public function getDependencies(): array
     {
         return [TagFixtures::class, UserFixtures::class];

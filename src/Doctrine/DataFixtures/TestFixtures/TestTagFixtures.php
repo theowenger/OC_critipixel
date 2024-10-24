@@ -15,15 +15,17 @@ final class TestTagFixtures extends Fixture implements FixtureGroupInterface
     {
         return ['test'];
     }
+
     public function load(ObjectManager $manager): void
     {
-        $tags = array_fill_callback(
-            0,
-            25,
-            static fn (int $index): Tag => (new Tag)->setName(sprintf('Tag %d', $index))
-        );
+        $tags = [];
+        for ($i = 0; $i < 25; $i++) {
+            $tags[] = (new Tag())->setName(sprintf('Tag %d', $i));
+        }
 
-        array_walk($tags, [$manager, 'persist']);
+        foreach ($tags as $tag) {
+            $manager->persist($tag);
+        }
 
         $manager->flush();
     }
