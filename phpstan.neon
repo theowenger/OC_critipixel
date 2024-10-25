@@ -8,8 +8,6 @@ parameters:
         - tests
     bootstrapFiles:
         - vendor/autoload.php
-    ignoreErrors:
-        - '#Dummy error to ignore#'
 
     # Configuration spécifique à Symfony
     symfony:

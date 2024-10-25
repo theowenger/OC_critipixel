@@ -7,6 +7,9 @@ namespace App\Tests\Functional\Auth;
 use App\Tests\Functional\FunctionalTestCase;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
+/**
+ * @extends FunctionalTestCase<object>
+ */
 final class LoginTest extends FunctionalTestCase
 {
     public function testThatLoginShouldSucceeded(): void
@@ -18,6 +21,7 @@ final class LoginTest extends FunctionalTestCase
             'password' => 'password'
         ]);
 
+        /** @var AuthorizationCheckerInterface $authorizationChecker */
         $authorizationChecker = $this->service(AuthorizationCheckerInterface::class);
 
         self::assertTrue($authorizationChecker->isGranted('IS_AUTHENTICATED'));
@@ -36,6 +40,7 @@ final class LoginTest extends FunctionalTestCase
             'password' => 'fail'
         ]);
 
+        /** @var AuthorizationCheckerInterface $authorizationChecker */
         $authorizationChecker = $this->service(AuthorizationCheckerInterface::class);
 
         self::assertFalse($authorizationChecker->isGranted('IS_AUTHENTICATED'));

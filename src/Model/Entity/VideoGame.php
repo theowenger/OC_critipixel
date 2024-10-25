@@ -182,7 +182,7 @@ class VideoGame
         return $this->test;
     }
 
-    public function setTest(?string $test): VideoGame
+    public function setTest(string $test): VideoGame
     {
         $this->test = $test;
         return $this;

@@ -8,13 +8,17 @@ use App\Model\Entity\User;
 use App\Tests\Functional\FunctionalTestCase;
 use Random\RandomException;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
-
+use Traversable;
+/**
+ * @extends FunctionalTestCase<object>
+ */
 final class RegisterTest extends FunctionalTestCase
 {
     /**
+     * @return Traversable<string, array<int, array<string, mixed>>>
      * @throws RandomException
      */
-    public static function provideInvalidFormData(): iterable
+    public static function provideInvalidFormData(): Traversable
     {
         yield 'empty username' => [self::getFormData(['register[username]' => ''])];
         yield 'non unique username' => [self::getFormData(['register[username]' => 'user+1'])];
@@ -24,20 +28,19 @@ final class RegisterTest extends FunctionalTestCase
         yield 'invalid email' => [self::getFormData(['register[email]' => 'fail'])];
     }
 
-    /**
-     * @throws RandomException
-     */
+
     public function testThatRegistrationShouldSucceeded(): void
     {
         $this->get('/auth/register');
 
-        $this->client->submitForm('S\'inscrire', self::getFormData( [], true));
+        $this->client->submitForm('S\'inscrire', self::getFormData( []));
 
         self::assertResponseRedirects('/auth/login');
 
         $this->getEntityManager()->clear();
-        $user = $this->getEntityManager()->getRepository(User::class)->findOneByEmail('user@email.com');
+        $user = $this->getEntityManager()->getRepository(User::class)->findOneBy(['email'=>'user@email.com']);
 
+        /** @var UserPasswordHasherInterface $userPasswordHasher */
         $userPasswordHasher = $this->service(UserPasswordHasherInterface::class);
 
         self::assertNotNull($user);
@@ -47,7 +50,8 @@ final class RegisterTest extends FunctionalTestCase
     }
 
     /**
-     * @throws RandomException
+     * @param array<string, string> $overrideData
+     * @return array<string, string>
      */
     public static function getFormData(array $overrideData = []): array
     {
@@ -60,6 +64,7 @@ final class RegisterTest extends FunctionalTestCase
 
     /**
      * @dataProvider provideInvalidFormData
+     * @param array<string, string> $formData
      */
     public function testThatRegistrationShouldFailed(array $formData): void
     {

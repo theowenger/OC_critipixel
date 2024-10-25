@@ -10,6 +10,9 @@ use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\DomCrawler\Crawler;
 
+/**
+ * @template T of object
+ */
 abstract class FunctionalTestCase extends WebTestCase
 {
     protected KernelBrowser $client;
@@ -26,15 +29,19 @@ abstract class FunctionalTestCase extends WebTestCase
     }
 
     /**
-     * @template T
      * @param class-string<T> $id
-     * @return T
+     * @return object
      */
     protected function service(string $id): object
     {
         return $this->client->getContainer()->get($id);
     }
 
+    /**
+     * @param string $uri
+     * @param array<string, mixed> $parameters
+     * @return Crawler
+     */
     protected function get(string $uri, array $parameters = []): Crawler
     {
         return $this->client->request('GET', $uri, $parameters);
@@ -42,7 +49,9 @@ abstract class FunctionalTestCase extends WebTestCase
 
     protected function login(string $email = 'user+0@email.com'): void
     {
-        $user = $this->service(EntityManagerInterface::class)->getRepository(User::class)->findOneByEmail($email);
+        /** @var EntityManagerInterface $entityManager */
+        $entityManager = $this->service(EntityManagerInterface::class);
+        $user = $entityManager->getRepository(User::class)->findOneBy(['email' => 'user+0@email.com']);
 
         $this->client->loginUser($user);
     }

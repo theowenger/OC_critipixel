@@ -7,11 +7,14 @@ namespace App\Tests\Functional\VideoGame;
 use App\Model\Entity\User;
 use App\Tests\Functional\FunctionalTestCase;
 use Symfony\Component\HttpFoundation\Response;
-use UserRepository;
+//use UserRepository;
 
+/**
+ * @extends FunctionalTestCase<object>
+ */
 final class ShowTest extends FunctionalTestCase
 {
-    private UserRepository $userRepository;
+//    private UserRepository $userRepository;
     public function testShouldShowVideoGame(): void
     {
         $this->get('/jeu-video-0');

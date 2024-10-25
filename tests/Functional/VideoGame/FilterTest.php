@@ -8,6 +8,9 @@ use App\Model\Entity\Tag;
 use App\Tests\Functional\FunctionalTestCase;
 use Random\RandomException;
 
+/**
+ * @extends FunctionalTestCase<object>
+ */
 final class FilterTest extends FunctionalTestCase
 {
     public function testShouldListTenVideoGames(): void
