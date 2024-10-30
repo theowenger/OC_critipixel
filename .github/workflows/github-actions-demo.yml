@@ -58,7 +58,7 @@ jobs:
         run: php bin/console doctrine:fixtures:load --group=test -n --purge-with-truncate --env=test
 
       - name: Run PHPUnit tests
-        run: php bin/phpunit --env=test
+        run: php bin/phpunit
 
       - name: Run PHPStan
         run: phpstan analyse src --level=6
