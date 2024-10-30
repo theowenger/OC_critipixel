@@ -61,6 +61,8 @@ jobs:
 
       - name: Run PHPUnit tests
         run: php bin/phpunit
+        env:
+          DATABASE_URL: "postgresql://postgres:postgres@127.0.0.1:5432/criti-pixel_test?serverVersion=16&charset=utf8"
 
       - name: Run PHPStan
         run: phpstan analyse src --level=6
