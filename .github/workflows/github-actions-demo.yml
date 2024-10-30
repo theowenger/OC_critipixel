@@ -51,6 +51,7 @@ jobs:
           cp .env .env.local
           php bin/console doctrine:database:create --env=test
           php bin/console doctrine:schema:update --force --env=test
+          symfony console doctrine:fixtures:load --group=test -n --purge-with-truncate
         env:
           DATABASE_URL: "postgresql://postgres:postgres@127.0.0.1:5432/criti-pixel?serverVersion=16&charset=utf8"
 
