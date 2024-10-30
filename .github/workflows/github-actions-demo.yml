@@ -52,10 +52,10 @@ jobs:
           php bin/console doctrine:database:create --env=test
           php bin/console doctrine:schema:update --force --env=test
         env:
-          DATABASE_URL: "postgresql://postgres:postgres@127.0.0.1:5432/criti-pixel?serverVersion=16&charset=utf8"
+          DATABASE_URL: "postgresql://postgres:postgres@127.0.0.1:5432/criti-pixel_test?serverVersion=16&charset=utf8"
 
       - name: Load Test Fixtures
-        run: php bin/console doctrine:fixtures:load --group=test -n --purge-with-truncate --env=test
+        run: php bin/console doctrine:fixtures:load --group=test -n --env=test --purge-with-truncate
 
       - name: Run PHPUnit tests
         run: php bin/phpunit
