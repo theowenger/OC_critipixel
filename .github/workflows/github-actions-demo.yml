@@ -46,6 +46,12 @@ jobs:
       - name: Install Composer dependencies
         run: composer install --prefer-dist --no-progress --no-suggest
 
+      - name: Create Test Database
+        run: |
+          psql -h 127.0.0.1 -U postgres -c "CREATE DATABASE \"criti-pixel_test\";"
+        env:
+          PGPASSWORD: postgres
+
       - name: Set environment for testing
         run: |
           cp .env .env.local
