@@ -91,3 +91,6 @@ symfony console doctrine:fixtures:load --group=default -n --purge-with-truncate
 # Pour lancer les fixtures de test :
 symfony console doctrine:fixtures:load --group=test -n --purge-with-truncate
 
+# Pour lancer les tests PhpStan :
+
+vendor/bin/phpstan analyse
