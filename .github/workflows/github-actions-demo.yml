@@ -54,10 +54,13 @@ jobs:
         env:
           DATABASE_URL: "postgresql://postgres:postgres@127.0.0.1:5432/criti-pixel?serverVersion=16&charset=utf8"
 
+      - name: Load Fixtures
+        run: php bin/console doctrine:fixtures:load --group=test -n --purge-with-truncate
+        env:
+          DATABASE_URL: "postgresql://postgres:postgres@127.0.0.1:5432/criti-pixel?serverVersion=16&charset=utf8"
+
       - name: Run PHPUnit tests
-        run:
-          symfony console doctrine:fixtures:load --group=test -n --purge-with-truncate
-          php bin/phpunit
+        run: php bin/phpunit
 
       - name: Run PHPStan
         run: phpstan analyse src --level=6
