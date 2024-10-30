@@ -43,31 +43,16 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-php-
 
-      - name: Install Composer dependencies
-        run: composer install --prefer-dist --no-progress --no-suggest
-
-      - name: Create Test Database
+      - name: Build
         run: |
-          psql -h 127.0.0.1 -U postgres -c "CREATE DATABASE \"criti-pixel_test\";"
-        env:
-          PGPASSWORD: postgres
-
-      - name: Set environment for testing
-        run: |
-          cp .env .env.local
+          docker compose -f "docker-compose.yml" up -d --build
+          composer install
+          php bin/console doctrine:database:drop -f --if-exists --env=test
           php bin/console doctrine:database:create --env=test
-          php bin/console doctrine:schema:update --force --env=test
-        env:
-          DATABASE_URL: "postgresql://postgres:postgres@127.0.0.1:5432/criti-pixel_test?serverVersion=16&charset=utf8"
-
-      - name: Apply Migrations
-        run: php bin/console doctrine:migrations:migrate --env=test --no-interaction
-
-      - name: Load Test Fixtures
-        run: php bin/console doctrine:fixtures:load --group=test -n --env=test --purge-with-truncate
-
-      - name: Run PHPUnit tests
+          php bin/console doctrine:migrations:migrate -n --env=test
+          php bin/console doctrine:fixtures:load -n --purge-with-truncate --group=test --env=test
+          php bin/console sass:build
+      - name: Tests
         run: php bin/phpunit
-
-      - name: Run PHPStan
-        run: phpstan analyse src --level=6
+      - name: Analysis
+        run: php vendor/bin/phpstan
